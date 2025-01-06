@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RiskRadar - Intelligent Road Safety Assistant</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #f3f4f6;
+            color: #333;
+        }
+        h1 {
+            font-weight: bold;
+            color: #4a90e2;
+        }
+        form {
+            margin: 20px auto;
+            max-width: 400px;
+            background: #ffffff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        label {
+            display: block;
+            margin: 10px 0 5px;
+            text-align: left;
+        }
+        input, select {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        button {
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result {
+            display: none;
+            margin-top: 20px;
+            padding: 20px;
+            background-color: #fffbcc;
+            border: 1px solid #ffd966;
+            border-radius: 5px;
+            font-weight: bold;
+            color: #6c7510;
+        }
+    </style>
+</head>
+<body>
+    <h1>Hello, I am RiskRadar</h1>
+    <p>Your intelligent road safety assistant.</p>
+    <form id="crashForm">
+        <label for="vehicleSpeed">Vehicle Speed</label>
+        <input type="number" id="vehicleSpeed" placeholder="Enter speed (e.g., 60)" required>
+
+        <label for="crashTime">Crash Time</label>
+        <input type="number" id="crashTime" placeholder="Enter time (e.g., 14)" required>
+
+        <label for="age">Driver's Age</label>
+        <input type="number" id="age" placeholder="Enter age (e.g., 30)" required>
+
+        <label for="gender">Gender</label>
+        <select id="gender" required>
+            <option value="Male">Male</option>
+            <option value="Female">Female</option>
+        </select>
+
+        <label for="vehicleType">Vehicle Type</label>
+        <select id="vehicleType" required>
+            <option value="T.W">Two-Wheeler</option>
+            <option value="Car">Car</option>
+            <option value="Heavy Vehicle">Heavy Vehicle</option>
+        </select>
+
+        <label for="numberOfLanes">Number of Lanes</label>
+        <input type="number" id="numberOfLanes" placeholder="Enter number of lanes (e.g., 2)" required>
+
+        <label for="laneWidth">Lane Width</label>
+        <input type="number" step="0.1" id="laneWidth" placeholder="Enter lane width (e.g., 3.5)" required>
+
+        <label for="roadType">Road Type</label>
+        <select id="roadType" required>
+            <option value="Urban">Urban</option>
+            <option value="Rural">Rural</option>
+        </select>
+
+        <label for="alcoholConsumption">Alcohol Consumption</label>
+        <select id="alcoholConsumption" required>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+        </select>
+
+        <label for="crashType">Crash Type</label>
+        <select id="crashType" required>
+            <option value="Head-on">Head-on</option>
+            <option value="Rear-end">Rear-end</option>
+        </select>
+
+        <label for="seatbeltUsage">Seatbelt Usage</label>
+        <select id="seatbeltUsage" required>
+            <option value="Yes">Yes</option>
+            <option value="No">No</option>
+        </select>
+
+        <label for="speedLimit">Speed Limit</label>
+        <input type="number" id="speedLimit" placeholder="Enter speed limit (e.g., 60)" required>
+
+        <label for="roadSurfaceCondition">Road Surface Condition</label>
+        <select id="roadSurfaceCondition" required>
+            <option value="Dry">Dry</option>
+            <option value="Wet">Wet</option>
+            <option value="Icy">Icy</option>
+        </select>
+
+        <button type="button" id="submitButton">Submit</button>
+    </form>
+
+    <div id="result">
+        Predicted Crash Severity: <span id="output"></span>
+    </div>
+
+    <script>
+        document.getElementById('submitButton').addEventListener('click', function() {
+            const formData = {
+                Vehicle_Speed: document.getElementById('vehicleSpeed').value,
+                Crash_Time: document.getElementById('crashTime').value,
+                Age: document.getElementById('age').value,
+                Gender: document.getElementById('gender').value,
+                Vehicle_Type: document.getElementById('vehicleType').value,
+                Number_of_Lanes: document.getElementById('numberOfLanes').value,
+                Lane_Width: document.getElementById('laneWidth').value,
+                Road_Type: document.getElementById('roadType').value,
+                Alcohol_Consumption: document.getElementById('alcoholConsumption').value,
+                Crash_Type: document.getElementById('crashType').value,
+                Seatbelt_Usage: document.getElementById('seatbeltUsage').value,
+                Speed_Limit: document.getElementById('speedLimit').value,
+                Road_Surface_Condition: document.getElementById('roadSurfaceCondition').value
+            };
+
+            fetch('/predict', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(formData)
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.severity) {
+                    document.getElementById('output').textContent = data.severity;
+                    document.getElementById('result').style.display = 'block';
+                } else {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        });
+    </script>
+</body>
+</html>
